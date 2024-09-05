@@ -1,0 +1,44 @@
+#!/bin/bash
+
+# Set MySQL connection details
+DB_HOST="127.0.0.1"
+DB_USER="root"
+DB_PASS="College419**"
+DB_NAME="posey"
+CSV_DIR="C:/Users/User/Desktop/CDE/git_linux_ass/Scripts/Bash_scripts/parch_and_possay"  # Directory containing the CSV files
+
+# Function to import a CSV file into a corresponding MySQL table
+import_csv_to_mysql() {
+  csv_file="$1"
+  
+  # Extract table name from the CSV file name (without the extension)
+  table_name=$(basename "$csv_file" .csv)
+
+  echo "Importing $csv_file into table $table_name..."
+
+  # Import CSV into the table using LOAD DATA INFILE
+  mysql -h $DB_HOST -u $DB_USER -p$DB_PASS $DB_NAME -e "
+  LOAD DATA INFILE '$csv_file' 
+  INTO TABLE $table_name
+  FIELDS TERMINATED BY ',' 
+  ENCLOSED BY '\"'
+  LINES TERMINATED BY '\n'
+  IGNORE 1 LINES;
+  "
+
+  if [ $? -eq 0 ]; then
+    echo "Successfully imported $csv_file into $table_name."
+  else
+    echo "Failed to import $csv_file."
+  fi
+}
+
+# Iterate over CSV files in the directory
+for csv_file in "$CSV_DIR"/*.csv; do
+  # Check if the file exists
+  if [[ -f "$csv_file" ]]; then
+    import_csv_to_mysql "$csv_file"
+  else
+    echo "No CSV files found in $CSV_DIR."
+  fi
+done

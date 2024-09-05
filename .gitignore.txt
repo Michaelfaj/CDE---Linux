@@ -1,0 +1,5 @@
+# ignore CSV folders
+raw
+C:/User/\User/Desktop/CDE/git_linux_ass/Scripts/Bash_scripts/Gold
+Transformed
+parch_and_possay
